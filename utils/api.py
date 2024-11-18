@@ -24,23 +24,26 @@ class GenaiAPI:
         self.set_api_config(config)
 
     def set_api_key(self, config: Mapping[str, Any]) -> None:
-        genai.configure(api_key=config.GOOGLE_API_KEY)
+        try:
+            genai.configure(api_key=config.get("GOOGLE_API_KEY"))
+        except Exception as e:
+            print(e)
 
     def set_api_config(self, config: Mapping[str, Any]) -> None:
         GENAI_CONFIG = genai.GenerationConfig(
             temperature=config.get("temperature", 1.0),
             top_k=config.get("top_k", 64),
             top_p=config.get("top_p", 0.95),
-            response_mime_type="text/x.enum",
-            response_schema=Sentiment
+            # response_mime_type="text/x.enum",
+            # response_schema=Sentiment
         )
         self.flash_model = genai.GenerativeModel(
-            'gemini-1.5-flash',
-            model_config=GENAI_CONFIG
+            config.get("model_name", "gemini-1.5-flash"),
+            generation_config=GENAI_CONFIG
         )
 
 def main():
-    config = read_yaml("config.yaml")
+    config = read_yaml("./etc/config.yaml")
     genai_api = GenaiAPI(config)
 
 if __name__ == "__main__":
