@@ -9,11 +9,53 @@ class Sentiment(enum.Enum):
     POSITIVE = "positive"
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
+    MIXED = "mixed"
 
 class Topic(enum.Enum):
-    PLAYERS = "players"
-    TEAMS = "teams"
-    GAMES = "games"
+    PLAYER_PERFORMANCE = "Player Performance"
+    GAME_OUTCOME = "Game Outcome"
+    TEAM_STRATEGY = "Team Strategy"
+    REFEREE_DECISIONS = "Referee Decisions"
+    TRADES_RUMORS = "Trades/Rumors"
+    INJURY_CONCERNS = "Injury Concerns"
+    OFF_COURT_NEWS = "Off-Court News"
+    GENERAL_DISCUSSION = "General Discussion"
+
+
+PROMPT = """
+    You are an advanced text classifier for analyzing basketball forum discussions. Given a post title and a comment, identify the topic and sentiment of the comment. Return the result in JSON format.
+
+### Guidelines:
+1. The "topic" should describe the primary subject of the comment. Select from:
+   - "Player Performance"
+   - "Game Outcome"
+   - "Team Strategy"
+   - "Referee Decisions"
+   - "Trades/Rumors"
+   - "Injury Concerns"
+   - "Off-Court News"
+   - "General Discussion"
+2. The "sentiment" should describe the emotional tone of the comment. Select from:
+   - "Positive"
+   - "Negative"
+   - "Neutral"
+   - "Mixed"
+3. Optionally include a "sentiment_score" field with a value between 0.0 and 1.0, where higher values indicate stronger sentiment.
+
+### Input:
+- Post Title: {post_title}
+- Comment: {comment}
+
+### Output:
+Return the classification result in the following JSON format:
+```json
+{{
+  "topic": "<topic>",
+  "sentiment": "<sentiment>",
+  "sentiment_score": <sentiment_score>
+}}
+"""
+
 
 class GenaiAPI:
     def __init__(self) -> None:
@@ -34,13 +76,14 @@ class GenaiAPI:
             temperature=config.get("temperature", 1.0),
             top_k=config.get("top_k", 64),
             top_p=config.get("top_p", 0.95),
-            # response_mime_type="text/x.enum",
-            # response_schema=Sentiment
         )
         self.flash_model = genai.GenerativeModel(
             config.get("model_name", "gemini-1.5-flash"),
             generation_config=GENAI_CONFIG
         )
+
+    def send_prompt(self, post_tile: str, comment: str) -> str:
+        return self.flash_model.generate_content(PROMPT.format(post_title=post_tile, comment=comment))
 
 def main():
     config = read_yaml("./etc/config.yaml")
