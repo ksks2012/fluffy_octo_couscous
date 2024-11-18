@@ -1,4 +1,4 @@
-from typing import Mapping, Any
+from typing import Mapping, Any, TypedDict
 
 import enum
 import google.generativeai as genai
@@ -20,6 +20,11 @@ class Topic(enum.Enum):
     INJURY_CONCERNS = "Injury Concerns"
     OFF_COURT_NEWS = "Off-Court News"
     GENERAL_DISCUSSION = "General Discussion"
+
+class APIResponse(TypedDict):
+    topic: Topic
+    sentiment: Sentiment
+    sentiment_score: float
 
 
 PROMPT = """
@@ -56,6 +61,22 @@ Return the classification result in the following JSON format:
 }}
 """
 
+PROMPT_JSON_MODE = """
+    You are an advanced text classifier for analyzing basketball forum discussions. Given a post title and a comment, identify the topic and sentiment of the comment. Return the result in JSON format.
+
+### Input:
+- Post Title: {post_title}
+- Comment: {comment}
+### Output:
+Return the classification result in the following JSON format:
+```json
+{{
+  "topic": "<topic>",
+  "sentiment": "<sentiment>",
+  "sentiment_score": <sentiment_score>
+}}
+"""
+
 
 class GenaiAPI:
     def __init__(self) -> None:
@@ -76,6 +97,9 @@ class GenaiAPI:
             temperature=config.get("temperature", 1.0),
             top_k=config.get("top_k", 64),
             top_p=config.get("top_p", 0.95),
+            # NOTE: JSON MODE is not as stable as few-shot mode
+            # response_mime_type="application/json",
+            # response_schema=list[APIResponse],
         )
         self.flash_model = genai.GenerativeModel(
             config.get("model_name", "gemini-1.5-flash"),
@@ -84,6 +108,9 @@ class GenaiAPI:
 
     def send_prompt(self, post_tile: str, comment: str) -> str:
         return self.flash_model.generate_content(PROMPT.format(post_title=post_tile, comment=comment))
+
+    def send_prompt_json_mode(self, post_tile: str, comment: str) -> str:
+        return self.flash_model.generate_content(PROMPT_JSON_MODE.format(post_title=post_tile, comment=comment))
 
 def main():
     config = read_yaml("./etc/config.yaml")
