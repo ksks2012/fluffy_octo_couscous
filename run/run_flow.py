@@ -3,7 +3,7 @@ from utils.api.basic import GenaiAPI
 from utils.translator import TranslatorZhTwToEn
 from utils.file_processor import read_json, read_yaml
 
-def main():
+def run_genai_api():
     # TODO: Replace test file with crawler data
     data = read_json("./var/test.json")
     print(data)
@@ -24,5 +24,9 @@ def main():
         response = genai_api.send_prompt(value["translated_title"], value["translated_message"])
         print(response.text)
 
+def run_genai_chat_api():
+    pass
+
 if __name__ == "__main__":
-    main()
+    run_genai_api()
+    run_genai_chat_api()
