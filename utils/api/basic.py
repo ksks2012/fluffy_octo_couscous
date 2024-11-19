@@ -65,8 +65,8 @@ class GenaiAPI:
     def send_prompt(self, post_tile: str, comment: str) -> str:
         return self.flash_model.generate_content(PROMPT.format(post_title=post_tile, comment=comment))
 
-    def send_prompt_json_mode(self, post_tile: str, comment: str) -> str:
-        return self.flash_model.generate_content(PROMPT_JSON_MODE.format(post_title=post_tile, comment=comment))
+    def send_prompt_json_mode(self, post_title: str, comment: str) -> str:
+        return self.flash_model.generate_content(PROMPT_JSON_MODE.format(post_title=post_title, comment=comment))
 
 def main():
     config = read_yaml("./etc/config.yaml")
