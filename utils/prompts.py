@@ -96,3 +96,9 @@ You are a sophisticated language model specialized in analyzing basketball forum
   "sentiment_score": 0.75
 }
 """
+
+PROMPT_CHAT_MODE = """
+### Input:
+- Post Title: {post_title}
+- Comment: {comment}
+"""
