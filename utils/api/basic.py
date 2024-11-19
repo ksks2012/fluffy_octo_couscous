@@ -1,8 +1,10 @@
+from google.api_core import retry
 from typing import Mapping, Any, TypedDict
 
 import enum
 import google.generativeai as genai
 
+# inner imports
 from utils.file_processor import read_yaml
 from utils.prompts import PROMPT, PROMPT_JSON_MODE
 
@@ -34,6 +36,7 @@ class GenaiAPI:
     def __init__(self, config: Mapping[str, Any]) -> None:
         self.set_api_key(config)
         self.set_api_config(config)
+        self.create_model()
 
     def set_api_key(self, config: Mapping[str, Any]) -> None:
         try:
@@ -42,7 +45,7 @@ class GenaiAPI:
             print(e)
 
     def set_api_config(self, config: Mapping[str, Any]) -> None:
-        GENAI_CONFIG = genai.GenerationConfig(
+        self.GENAI_CONFIG = genai.GenerationConfig(
             temperature=config.get("temperature", 1.0),
             top_k=config.get("top_k", 64),
             top_p=config.get("top_p", 0.95),
@@ -50,9 +53,13 @@ class GenaiAPI:
             # response_mime_type="application/json",
             # response_schema=list[APIResponse],
         )
+
+        self.retry_policy = {"retry": retry.Retry(predicate=retry.if_transient_error)}
+
+    def create_model(self) -> None:
         self.flash_model = genai.GenerativeModel(
-            config.get("model_name", "gemini-1.5-flash"),
-            generation_config=GENAI_CONFIG
+            "gemini-1.5-flash",
+            generation_config=self.GENAI_CONFIG
         )
 
     def send_prompt(self, post_tile: str, comment: str) -> str:
