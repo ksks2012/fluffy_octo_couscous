@@ -1,5 +1,5 @@
 
-from utils.api import main as api_main, GenaiAPI
+from utils.api.basic import GenaiAPI
 from utils.translator import TranslatorZhTwToEn
 from utils.file_processor import read_json, read_yaml
 
