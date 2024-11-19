@@ -12,6 +12,7 @@ setup(name="fluffy_octo_couscous",
             "google-generativeai>=0.8.3",
             "googletrans==4.0.0-rc1",
             "PyYaml >= 6.0",
+            "pytest >= 8.3.3"
 		],
 		entry_points={
 		},
