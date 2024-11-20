@@ -12,7 +12,9 @@ setup(name="fluffy_octo_couscous",
             "google-generativeai>=0.8.3",
             "googletrans==4.0.0-rc1",
             "PyYaml >= 6.0",
-            "pytest >= 8.3.3"
+            "pytest >= 8.3.3",
+            "SQLAlchemy >= 2.0.36",
+            "alembic >= 1.14.0",
 		],
 		entry_points={
 		},
