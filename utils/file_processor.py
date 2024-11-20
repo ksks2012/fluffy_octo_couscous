@@ -1,8 +1,10 @@
 import csv
+import configparser
 import json
 import os
 import pprint
 import yaml
+
 
 from typing import Mapping
 
@@ -44,3 +46,9 @@ def write_csv(filename: str, data: list):
         writer.writeheader()
         for row in data:
             writer.writerow(row)
+
+def read_ini(filename: str) -> Mapping:
+    config = configparser.ConfigParser()
+    config.read(filename)
+
+    return config
