@@ -1,34 +1,39 @@
-from datetime import datetime, timezone
 from internal.dao import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import uuid
 
 from internal.dao.comment import Comment
 from internal.dao.search_log import SearchLog
 from internal.dao.topic import Topic
 from utils.file_processor import read_ini
 
-def create_connection(DATABASE_URL: str) -> None:
-    # Database engine and session
-    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+class DBRoutine:
+    def __init__(self, DATABASE_URL: str):
+        self.DATABASE_URL = DATABASE_URL
+        self.create_db_if_not_exists()
+        self.create_connection()
 
-    try:
-        Base.metadata.create_all(bind=engine)
-        print("SQLite database table created.")
-    except Exception as e:
-        print(e)
-        return
-    
-    try:
-        connection = engine.connect()
-        print("SQLite database connected.")
-    except Exception as e:
-        print(e)
-        return
+    def create_db_if_not_exists(self) -> None:
+        self.engine = create_engine(self.DATABASE_URL, connect_args={"check_same_thread": False})
+        try:
+            Base.metadata.create_all(bind=self.engine)
+            print("SQLite database table created.")
+        except Exception as e:
+            print(e)
+            return
+
+    def create_connection(self) -> None:
+        # Database engine and session
+        self.session_local = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+
+        try:
+            self.connection = self.engine.connect()
+            print("SQLite database connected.")
+        except Exception as e:
+            print(e)
+            return
 
 # Create the table
 if __name__ == "__main__":
     config = read_ini("./alembic.ini")
-    create_connection(config["alembic"]["sqlalchemy.url"])
+    db_routine = DBRoutine(config["alembic"]["sqlalchemy.url"])

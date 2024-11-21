@@ -5,29 +5,15 @@ from sqlalchemy.orm import sessionmaker
 import uuid
 
 from internal.dao.comment import Comment
+from internal.dao.dbroutine import DBRoutine
 from utils.file_processor import read_ini
 
-def create_connection(DATABASE_URL: str) -> None:
-    # Database engine and session
-    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-    try:
-        Base.metadata.create_all(bind=engine)
-        print("SQLite database table created.")
-    except Exception as e:
-        print(e)
-        return
+def run_db_routine() -> None:
+    config = read_ini("./alembic.ini")
+    db_routine = DBRoutine(config["alembic"]["sqlalchemy.url"])
     
     try:
-        connection = engine.connect()
-        print("SQLite database connected.")
-    except Exception as e:
-        print(e)
-        return
-    
-    try:
-        session = SessionLocal()
+        session = db_routine.session_local()
         new_comment = Comment(
             thread_id=str(uuid.uuid4()),
             user_id="user123",
@@ -50,5 +36,4 @@ def create_connection(DATABASE_URL: str) -> None:
     
 # Create the table
 if __name__ == "__main__":
-    config = read_ini("./alembic.ini")
-    create_connection(config["alembic"]["sqlalchemy.url"])
+    run_db_routine()
