@@ -6,6 +6,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from internal.dao import Base
+from internal.dao.analysis_result import AnalysisResult
 from internal.dao.comment import Comment
 from internal.dao.search_log import SearchLog
 from internal.dao.topic import Topic
