@@ -92,8 +92,14 @@ System for analyzing NBA basketball forum messages.
 
 # Database Structure Design
 
+## Database Relationships
+- The `Comments Table` references the `API Analysis Results Table` through the `analysis_id` foreign key.
+- This separation ensures that metadata about the analysis process and results are stored distinctly, allowing for:
+  1. Better flexibility when changing models or parameters.
+  2. Easier tracking of analysis configurations for audit or experimentation.
+
 ## 1. Comments Table
-Stores the original forum titles and comments, along with the API's classification and sentiment analysis results.
+Stores the original forum titles and comments, along with references to API analysis results and embeddings for multilingual search.
 
 | **Column Name**      | **Type**         | **Description**                                                       |
 |-----------------------|------------------|------------------------------------------------------------------------|
@@ -102,17 +108,33 @@ Stores the original forum titles and comments, along with the API's classificati
 | `user_id`            | `VARCHAR(50)`    | Identifier for the user who posted the comment.                       |
 | `post_title`         | `TEXT`           | The title of the forum discussion.                                    |
 | `comment_text`       | `TEXT`           | The content of the comment.                                           |
-| `topic`              | `VARCHAR(50)`    | Topic classification of the comment (e.g., "Player Performance").     |
-| `sentiment`          | `VARCHAR(20)`    | Sentiment classification (e.g., "Positive", "Negative").              |
-| `sentiment_score`    | `FLOAT`          | Sentiment intensity score (range 0.0 - 1.0).                          |
 | `language`           | `VARCHAR(10)`    | The language of the comment (e.g., "en", "zh").                       |
 | `created_at`         | `TIMESTAMP`      | Original publication timestamp of the comment.                        |
 | `processed_at`       | `TIMESTAMP`      | Timestamp when the API analysis was completed.                        |
 | `vector_embedding`   | `VECTOR`         | Vector embedding for multilingual search and similarity matching.     |
+| `analysis_id`        | `UUID`           | Foreign key referencing the API analysis results.                     |
 
 ---
 
-## 2. Topics Table
+## 2. API Analysis Results Table
+Stores the results of sentiment analysis, topic classification, and the parameters used for the analysis.
+
+| **Column Name**      | **Type**         | **Description**                                                       |
+|-----------------------|------------------|------------------------------------------------------------------------|
+| `analysis_id`        | `UUID`           | Unique identifier for each API analysis result.                       |
+| `sentiment`          | `VARCHAR(20)`    | Sentiment classification (e.g., "Positive", "Negative").              |
+| `sentiment_score`    | `FLOAT`          | Sentiment intensity score (range 0.0 - 1.0).                          |
+| `topic`              | `VARCHAR(50)`    | Topic classification of the comment (e.g., "Player Performance").     |
+| `model_name`         | `VARCHAR(100)`   | The name of the model used (e.g., "Gemini AI v3").                    |
+| `temperature`        | `FLOAT`          | The temperature parameter used for sampling.                          |
+| `top_k`              | `INTEGER`        | The top-k sampling parameter.                                         |
+| `top_p`              | `FLOAT`          | The top-p sampling parameter.                                         |
+| `mode`               | `VARCHAR(20)`    | The mode of the API used (e.g., "classification").                    |
+| `prompt`             | `TEXT`           | The prompt used to query the API.                                     |
+
+---
+
+## 3. Topics Table
 Stores all known topic categories to support topic classification queries.
 
 | **Column Name**      | **Type**       | **Description**                           |
@@ -122,7 +144,7 @@ Stores all known topic categories to support topic classification queries.
 
 ---
 
-## 3. Search Logs Table
+## 4. Search Logs Table
 Records user search history to analyze popular topics or sentiment trends.
 
 | **Column Name**      | **Type**         | **Description**                           |
