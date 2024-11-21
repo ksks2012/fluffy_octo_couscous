@@ -2,6 +2,7 @@ from internal.dao import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from internal.dao.analysis_result import AnalysisResult
 from internal.dao.comment import Comment
 from internal.dao.search_log import SearchLog
 from internal.dao.topic import Topic
