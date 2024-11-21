@@ -6,6 +6,9 @@ from sqlalchemy import pool
 from alembic import context
 
 from internal.dao import Base
+from internal.dao.comment import Comment
+from internal.dao.search_log import SearchLog
+from internal.dao.topic import Topic
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
