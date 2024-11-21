@@ -2,6 +2,31 @@
 
 System for analyzing NBA basketball forum messages.
 
+ # Command
+
+ ## Alembic
+
+-  Revision
+  ```
+  alembic revision --autogenerate -m <Message>
+  ```
+
+- Migrate
+  ```
+  alembic upgrade head
+  ```
+
+- Downgrade
+  ```
+  alembic downgrade <revision_id>
+  ```
+
+- Info
+  ```
+  alembic history
+  ```
+
+
 # To-Do List
 
 - [ ] **Crawler**  
