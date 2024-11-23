@@ -1,7 +1,8 @@
-from internal.dao import Base
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import sessionmaker, Session
 
+from internal.dao import Base
 from internal.dao.analysis_result import AnalysisResult
 from internal.dao.comment import Comment
 from internal.dao.search_log import SearchLog
@@ -33,6 +34,46 @@ class DBRoutine:
         except Exception as e:
             print(e)
             return
+    
+    # TODO: Save list of comments
+    def save_comment(self, comment: Comment) -> bool:
+        """
+        Saves a Comment object to the database.
+        :param comment: Comment instance
+        :return: True if successful, False otherwise
+        """
+        session: Session = self.session_local()
+        try:
+            session.add(comment)
+            session.commit()
+            print(f"Saved Comment with ID: {comment.id}")
+            return True
+        except SQLAlchemyError as e:
+            print(f"Error saving Comment: {e}")
+            session.rollback()
+            return False
+        finally:
+            session.close()
+        
+    # TODO: Save list of analysis results
+    def save_analysis_result(self, result: AnalysisResult) -> bool:
+        """
+        Saves an AnalysisResult object to the database.
+        :param result: AnalysisResult instance
+        :return: True if successful, False otherwise
+        """
+        session: Session = self.session_local()
+        try:
+            session.add(result)
+            session.commit()
+            print(f"Saved AnalysisResult with ID: {result.analysis_id}")
+            return True
+        except SQLAlchemyError as e:
+            print(f"Error saving AnalysisResult: {e}")
+            session.rollback()
+            return False
+        finally:
+            session.close()
 
 # Create the table
 if __name__ == "__main__":
