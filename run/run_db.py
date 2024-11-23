@@ -1,19 +1,21 @@
 from datetime import datetime, timezone
-from internal.dao import Base
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import uuid
 
+from internal.dao.analysis_result import AnalysisResult
 from internal.dao.comment import Comment
 from internal.dao.dbroutine import DBRoutine
 from utils.file_processor import read_ini
 
-def run_db_routine() -> None:
-    config = read_ini("./alembic.ini")
-    db_routine = DBRoutine(config["alembic"]["sqlalchemy.url"])
-    
-    try:
-        session = db_routine.session_local()
+class DBHandler:
+    def __init__(self, config_path: str):
+        self.config = read_ini(config_path)
+        self.db_routine = DBRoutine(self.config["alembic"]["sqlalchemy.url"])
+
+    def run_all(self) -> None:
+        self.run_db_routine()
+        self.run_save_analysis_result()
+
+    def run_db_routine(self) -> None:
         new_comment = Comment(
             thread_id=str(uuid.uuid4()),
             user_id="user123",
@@ -24,13 +26,34 @@ def run_db_routine() -> None:
             processed_at=datetime.now(timezone.utc),
             vector_embedding=None
         )
-        session.add(new_comment)
-        session.commit()
-        session.close()
-    except Exception as e:
-        print(e)
-        return
-    
+
+        success = self.db_routine.save_comment(new_comment)
+        if success:
+            print("Coment saved successfully.")
+        else:
+            print("Failed to save comment.")
+
+    def run_save_analysis_result(self) -> None:
+        new_analysis_result = AnalysisResult(
+            sentiment="Positive",
+            sentiment_score=0.95,
+            topic="Test Topic",
+            model_name="Test Model",
+            temperature=0.7,
+            top_k=50,
+            top_p=0.9,
+            mode="test",
+            prompt="This is a test prompt."
+        )
+
+        # Save to the database
+        success = self.db_routine.save_analysis_result(new_analysis_result)
+        if success:
+            print("Analysis result saved successfully.")
+        else:
+            print("Failed to save analysis result.")
+
 # Create the table
 if __name__ == "__main__":
-    run_db_routine()
+    db_handler = DBHandler("./alembic.ini")
+    db_handler.run_all()
