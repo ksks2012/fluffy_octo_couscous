@@ -1,6 +1,6 @@
 import pytest
 from google.generativeai.types import content_types
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from utils.api.chat import GenaiChatAPI
 from utils.prompts import INSTRUCTION
@@ -14,10 +14,10 @@ def genai_chat_api():
         "top_p": 0.9
     }
     genai_chat_api = GenaiChatAPI(config)
-    # Mock the flash_model methods
+    # Mock the genai_model methods
     genai_chat_api.genai_model = MagicMock()
-    genai_chat_api.genai_model.start_chat.return_value = "chat_started"
-    genai_chat_api.genai_model.send_message.return_value = {
+    genai_chat_api.chat = MagicMock()
+    genai_chat_api.chat.send_message.return_value = {
         "topic": "Game Outcome",
         "sentiment": "Negative",
         "sentiment_score": 0.8
@@ -41,13 +41,13 @@ def test_data():
 def test_create_model(genai_chat_api):
     # Test create_model method
     genai_chat_api.create_model()
-    assert genai_chat_api.flash_model._system_instruction == content_types.to_content(INSTRUCTION)
-    assert genai_chat_api.flash_model is not None
+    assert genai_chat_api.genai_model._system_instruction == content_types.to_content(INSTRUCTION)
+    assert genai_chat_api.genai_model is not None
 
 def test_api_start_chat(genai_chat_api):
     # Test start_chat method
     response = genai_chat_api.start_chat()
-    assert response == "chat_started"
+    assert response == "Chat started"
 
 def test_send_msg_to_chat(genai_chat_api, test_data):
     # Test send_msg_to_chat method

@@ -31,19 +31,26 @@ def test_set_api_config(genai_api):
 
 def test_create_model(genai_api):
     genai_api.create_model()
-    assert genai_api.flash_model is not None
+    assert genai_api.genai_model is not None
 
 def test_send_prompt(genai_api):
-    genai_api.flash_model = MagicMock()
-    genai_api.flash_model.generate_content.return_value = "generated_content"
+    genai_api.genai_model = MagicMock()
+    genai_api.genai_model.generate_content.return_value = "generated_content"
     response = genai_api.send_prompt("Test Title", "Test Comment")
     assert response == "generated_content"
 
 def test_send_prompt_json_mode(genai_api):
-    genai_api.flash_model = MagicMock()
-    genai_api.flash_model.generate_content.return_value = "generated_content_json"
+    genai_api.genai_model = MagicMock()
+    genai_api.genai_model.generate_content.return_value = "generated_content_json"
     response = genai_api.send_prompt_json_mode("Test Title", "Test Comment")
     assert response == "generated_content_json"
+
+def test_get_model_config(genai_api):
+    config = genai_api.get_model_config()
+    assert config["model_name"] == "models/gemini-1.5-flash"
+    assert config["temperature"] == 0.7
+    assert config["top_k"] == 50
+    assert config["top_p"] == 0.9
 
 if __name__ == "__main__":
     pytest.main()

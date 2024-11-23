@@ -9,6 +9,7 @@ from utils.prompts import INSTRUCTION, PROMPT_CHAT_MODE
 class GenaiChatAPI(GenaiAPI):
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__(config)
+        self.chat = None
 
     def create_model(self) -> None:
         self.genai_model = genai.GenerativeModel(
@@ -19,7 +20,19 @@ class GenaiChatAPI(GenaiAPI):
 
     def start_chat(self) -> str:
         # TODO: Implement function call for reading history message of account from DB 
-        self.chat = self.genai_model.start_chat()
+        try:
+            self.chat = self.genai_model.start_chat()
+            return "Chat started"
+        except Exception as e:
+            print(e)
+            return "Chat failed to start"
 
     def send_msg_to_chat(self, post_title: str, comment: str) -> str:
-        return self.chat.send_message(PROMPT_CHAT_MODE.format(post_title=post_title, comment=comment), request_options=self.retry_policy)
+        response = ""
+        if self.chat is None:
+            return response
+        try:
+            response = self.chat.send_message(PROMPT_CHAT_MODE.format(post_title=post_title, comment=comment), request_options=self.retry_policy)
+        except Exception as e:
+            print(e)
+        return response
