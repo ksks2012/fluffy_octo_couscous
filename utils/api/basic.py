@@ -57,16 +57,24 @@ class GenaiAPI:
         self.retry_policy = {"retry": retry.Retry(predicate=retry.if_transient_error)}
 
     def create_model(self) -> None:
-        self.flash_model = genai.GenerativeModel(
+        self.genai_model = genai.GenerativeModel(
             "gemini-1.5-flash",
             generation_config=self.GENAI_CONFIG
         )
 
     def send_prompt(self, post_tile: str, comment: str) -> str:
-        return self.flash_model.generate_content(PROMPT.format(post_title=post_tile, comment=comment))
+        return self.genai_model.generate_content(PROMPT.format(post_title=post_tile, comment=comment))
 
     def send_prompt_json_mode(self, post_title: str, comment: str) -> str:
-        return self.flash_model.generate_content(PROMPT_JSON_MODE.format(post_title=post_title, comment=comment))
+        return self.genai_model.generate_content(PROMPT_JSON_MODE.format(post_title=post_title, comment=comment))
+
+    def get_model_config(self) -> Mapping[str, Any]:
+        return {
+            "model_name": self.genai_model.model_name,
+            "temperature": self.GENAI_CONFIG.temperature,
+            "top_k": self.GENAI_CONFIG.top_k,
+            "top_p": self.GENAI_CONFIG.top_p,
+        }
 
 def main():
     config = read_yaml("./etc/config.yaml")
