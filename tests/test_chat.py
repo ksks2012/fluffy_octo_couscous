@@ -15,9 +15,9 @@ def genai_chat_api():
     }
     genai_chat_api = GenaiChatAPI(config)
     # Mock the flash_model methods
-    genai_chat_api.flash_model = MagicMock()
-    genai_chat_api.flash_model.start_chat.return_value = "chat_started"
-    genai_chat_api.flash_model.send_message.return_value = {
+    genai_chat_api.genai_model = MagicMock()
+    genai_chat_api.genai_model.start_chat.return_value = "chat_started"
+    genai_chat_api.genai_model.send_message.return_value = {
         "topic": "Game Outcome",
         "sentiment": "Negative",
         "sentiment_score": 0.8
