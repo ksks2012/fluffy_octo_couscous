@@ -44,6 +44,13 @@ class DBRoutine:
         """
         session: Session = self.session_local()
         try:
+            # Validate that the analysis_id exists in the AnalysisResult table (if provided)
+            if comment.analysis_id:
+                analysis_result = session.query(AnalysisResult).filter_by(analysis_id=comment.analysis_id).first()
+                if not analysis_result:
+                    print(f"Error: Analysis ID {comment.analysis_id} does not exist.")
+                    return False
+
             session.add(comment)
             session.commit()
             print(f"Saved Comment with ID: {comment.id}")
@@ -62,6 +69,7 @@ class DBRoutine:
         :param result: AnalysisResult instance
         :return: True if successful, False otherwise
         """
+        result.hash_value = result.generate_hash()
         session: Session = self.session_local()
         try:
             session.add(result)
