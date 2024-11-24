@@ -131,6 +131,7 @@ Stores the results of sentiment analysis, topic classification, and the paramete
 | `top_p`              | `FLOAT`          | The top-p sampling parameter.                                         |
 | `mode`               | `VARCHAR(20)`    | The mode of the API used (e.g., "classification").                    |
 | `prompt`             | `TEXT`           | The prompt used to query the API.                                     |
+| `hash_value`         | `VARCHAR(64)`    | Hash value of the comment for deduplication.                          |
 
 ---
 
