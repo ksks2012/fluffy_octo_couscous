@@ -2,7 +2,7 @@ from sqlalchemy import (
     Column,
     String,
     Text,
-    Float,
+    ForeignKey,
     TIMESTAMP,
 )
 
@@ -23,3 +23,4 @@ class Comment(Base):
     created_at = Column(TIMESTAMP, default=datetime.datetime.utcnow, nullable=False)
     processed_at = Column(TIMESTAMP, nullable=True)
     vector_embedding = Column(Text, nullable=True)  # Storing embeddings as a serialized string
+    analysis_id = Column(String(36), ForeignKey("analysis_result.analysis_id"), nullable=True)
