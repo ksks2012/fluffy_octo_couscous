@@ -15,6 +15,7 @@ setup(name="fluffy_octo_couscous",
             "pytest >= 8.3.3",
             "SQLAlchemy >= 2.0.36",
             "alembic >= 1.14.0",
+            "beautifulsoup4 >= 4.12.3"
 		],
 		entry_points={
 		},
