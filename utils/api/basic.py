@@ -47,7 +47,7 @@ class GenaiAPI:
     def set_api_config(self, config: Mapping[str, Any]) -> None:
         self.GENAI_CONFIG = genai.GenerationConfig(
             temperature=config.get("temperature", 1.0),
-            top_k=config.get("top_k", 64),
+            top_k=config.get("top_k", 40),
             top_p=config.get("top_p", 0.95),
             # NOTE: JSON MODE is not as stable as few-shot mode
             # response_mime_type="application/json",
