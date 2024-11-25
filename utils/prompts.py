@@ -97,6 +97,15 @@ You are a sophisticated language model specialized in analyzing basketball forum
 }
 """
 
+PROMPT_POST_CONTEXT = """
+### Context:
+You are analyzing comments from an online forum. Below is the content of the original post for reference. Use this to better understand the discussion.
+
+- Post Title: {post_title}
+- Post Content: {post_content}
+"""
+
+
 PROMPT_CHAT_MODE = """
 ### Input:
 - Post Title: {post_title}

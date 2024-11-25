@@ -4,7 +4,7 @@ import google.generativeai as genai
 
 # inner imports
 from utils.api.basic import GenaiAPI
-from utils.prompts import INSTRUCTION, PROMPT_CHAT_MODE
+from utils.prompts import INSTRUCTION, PROMPT_CHAT_MODE, PROMPT_POST_CONTEXT
 
 class GenaiChatAPI(GenaiAPI):
     def __init__(self, config: Mapping[str, Any]) -> None:
@@ -18,10 +18,12 @@ class GenaiChatAPI(GenaiAPI):
             system_instruction=INSTRUCTION
         )
 
-    def start_chat(self) -> str:
+    def start_chat(self, post_title=None, post_content=None) -> str:
         # TODO: Implement function call for reading history message of account from DB 
         try:
             self.chat = self.genai_model.start_chat()
+            if post_title is not None and post_content is not None:
+                response = self.chat.send_message(PROMPT_POST_CONTEXT.format(post_title=post_title, post_content=post_content), request_options=self.retry_policy)
             return "Chat started"
         except Exception as e:
             print(e)
