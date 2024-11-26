@@ -2,7 +2,7 @@ from time import sleep
 import json
 
 
-from data_processor.sql_processor import process_comment, process_analysis_result
+from data_processor.sql_processor import process_response
 from internal.dao.dbroutine import DBRoutine
 from utils.api.basic import GenaiAPI
 from utils.api.chat import GenaiChatAPI
@@ -98,14 +98,13 @@ def run_save_analysis_result():
     for i in range(len(response_list)):
         test_json["comments"][i]["analysis_result"] = response_list[i]
 
-    import pprint
-    pprint.pprint(test_json)
-
-    processed_comment, processed_analysis_result = process_analysis_result(config, test_json)
+    processed_comment, processed_analysis_result = process_response(config, test_json)
     
     config = read_ini("./alembic.ini")
     db_routine = DBRoutine(config["alembic"]["sqlalchemy.url"])
     for i in range(len(processed_comment)):
+        if processed_comment[i].analysis_id != processed_analysis_result[i].analysis_id:
+            return
         db_routine.save_analysis_result(processed_analysis_result[i])
         db_routine.save_comment(processed_comment[i])
 
