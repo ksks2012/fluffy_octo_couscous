@@ -3,10 +3,10 @@ from typing import Any, Mapping
 import google.generativeai as genai
 
 # inner imports
-from utils.api.basic import GenaiAPI
+from utils.api.basic import GeminiAPI
 from utils.prompts import INSTRUCTION, PROMPT_CHAT_MODE, PROMPT_POST_CONTEXT
 
-class GenaiChatAPI(GenaiAPI):
+class GeminiChatAPI(GeminiAPI):
     def __init__(self, config: Mapping[str, Any]) -> None:
         super().__init__(config)
         self.chat = None

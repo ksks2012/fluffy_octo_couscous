@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock
-from utils.api.basic import GenaiAPI, Sentiment, Topic
+from utils.api.basic import GeminiAPI, Sentiment, Topic
 
 @pytest.fixture
 def genai_api():
@@ -10,7 +10,7 @@ def genai_api():
         "top_k": 50,
         "top_p": 0.9
     }
-    return GenaiAPI(config)
+    return GeminiAPI(config)
 
 def test_set_api_key(genai_api):
     genai_api.set_api_key({"GOOGLE_API_KEY": "new_fake_api_key"})

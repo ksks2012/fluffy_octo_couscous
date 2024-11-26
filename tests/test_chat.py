@@ -2,7 +2,7 @@ import pytest
 from google.generativeai.types import content_types
 from unittest.mock import MagicMock, patch
 
-from utils.api.chat import GenaiChatAPI
+from utils.api.chat import GeminiChatAPI
 from utils.prompts import INSTRUCTION
 
 @pytest.fixture
@@ -13,7 +13,7 @@ def genai_chat_api():
         "top_k": 50,
         "top_p": 0.9
     }
-    genai_chat_api = GenaiChatAPI(config)
+    genai_chat_api = GeminiChatAPI(config)
     # Mock the genai_model methods
     genai_chat_api.genai_model = MagicMock()
     genai_chat_api.chat = MagicMock()

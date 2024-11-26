@@ -4,8 +4,8 @@ import json
 
 from data_processor.sql_processor import process_response
 from internal.dao.dbroutine import DBRoutine
-from utils.api.basic import GenaiAPI
-from utils.api.chat import GenaiChatAPI
+from utils.api.basic import GeminiAPI
+from utils.api.chat import GeminiChatAPI
 from utils.file_processor import read_json, read_yaml, write_json, read_ini
 from utils.prompts import INSTRUCTION
 
@@ -16,7 +16,7 @@ def run_genai_api() -> None:
     print(data)
 
     config = read_yaml("./etc/config.yaml")
-    genai_api = GenaiAPI(config)
+    genai_api = GeminiAPI(config)
 
     for value in data:
         response = genai_api.send_prompt(value["translated_title"], value["translated_message"])
@@ -28,7 +28,7 @@ def run_genai_chat_api() -> None:
     print(data)
 
     config = read_yaml("./etc/config.yaml")
-    genai_api = GenaiChatAPI(config)
+    genai_api = GeminiChatAPI(config)
     genai_api.start_chat()
 
     for value in data:
@@ -53,7 +53,7 @@ def run_genai_chat_api_loop():
     comments = test_json["comments"]
 
     config = read_yaml("./etc/config.yaml")
-    genai_api = GenaiChatAPI(config)
+    genai_api = GeminiChatAPI(config)
     genai_api.start_chat(post_title, post_content)
 
     response_list = []

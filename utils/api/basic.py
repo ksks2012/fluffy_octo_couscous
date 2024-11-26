@@ -29,7 +29,7 @@ class APIResponse(TypedDict):
     sentiment: Sentiment
     sentiment_score: float
 
-class GenaiAPI:
+class GeminiAPI:
     def __init__(self) -> None:
         pass
 
@@ -78,7 +78,7 @@ class GenaiAPI:
 
 def main():
     config = read_yaml("./etc/config.yaml")
-    genai_api = GenaiAPI(config)
+    genai_api = GeminiAPI(config)
 
 if __name__ == "__main__":
     main()
